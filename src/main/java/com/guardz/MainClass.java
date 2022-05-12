@@ -8,7 +8,7 @@ import com.guardz.util.ThreadUtil;
  */
 public class MainClass {
 
-    private static final int LOOP_TIME = 100;
+    private static final int LOOP_TIME = 1;
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
