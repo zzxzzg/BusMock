@@ -1,6 +1,8 @@
 package com.guardz.station.domain;
 
 import com.guardz.exception.UnreachableException;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -24,6 +26,26 @@ public class Route {
     protected Route(ArrayList<RoutePoint> routePoints, String routeName) {
         this.routePoints = routePoints;
         this.routeName = routeName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Route route = (Route)o;
+
+        return new EqualsBuilder().append(routeName, route.routeName)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(routeName)
+            .toHashCode();
     }
 
     public String getRouteName() {

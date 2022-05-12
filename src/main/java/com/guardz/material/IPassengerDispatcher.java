@@ -1,6 +1,6 @@
 package com.guardz.material;
 
-import com.guardz.passanger.domain.Passenger;
+import com.guardz.passenger.domain.Passenger;
 
 /**
  * @Created: lidong on 2022/5/11 10:50 AM

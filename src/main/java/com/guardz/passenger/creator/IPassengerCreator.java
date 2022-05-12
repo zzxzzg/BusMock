@@ -1,4 +1,4 @@
-package com.guardz.passanger.creator;
+package com.guardz.passenger.creator;
 
 import com.guardz.timer.ITimer;
 

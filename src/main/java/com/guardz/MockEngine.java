@@ -4,9 +4,9 @@ import com.guardz.bus.controller.BusCenter;
 import com.guardz.material.MaterialDispatcher;
 import com.guardz.station.controller.StationCenter;
 import com.guardz.bus.creator.IBusCreator;
-import com.guardz.passanger.creator.IPassengerCreator;
+import com.guardz.passenger.creator.IPassengerCreator;
 import com.guardz.bus.creator.SimpleBusCreator;
-import com.guardz.passanger.creator.SimplePassengerCreator;
+import com.guardz.passenger.creator.SimplePassengerCreator;
 import com.guardz.timer.TimerExecutor;
 import com.guardz.station.manager.StationsManager;
 import com.guardz.station.service.RouteService;
@@ -45,7 +45,7 @@ public class MockEngine {
         timerExecutor.addTimer(stationCenter);
     }
 
-    public void start() {
+    public void start(boolean showLog) {
         Thread thread = new Thread(timerExecutor);
         thread.start();
         try {
@@ -53,6 +53,9 @@ public class MockEngine {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        busCenter.printRecord();
+        if (showLog) {
+            busCenter.printStatistics(timerExecutor.getWorldTime());
+            busCenter.printRecord();
+        }
     }
 }

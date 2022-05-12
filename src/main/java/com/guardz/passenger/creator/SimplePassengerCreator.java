@@ -1,9 +1,9 @@
-package com.guardz.passanger.creator;
+package com.guardz.passenger.creator;
 
 import com.guardz.WorldConfig;
 import com.guardz.exception.CalculateRouteException;
 import com.guardz.material.IPassengerDispatcher;
-import com.guardz.passanger.domain.Passenger;
+import com.guardz.passenger.domain.Passenger;
 import com.guardz.station.domain.Route;
 import com.guardz.station.domain.Stations;
 import com.guardz.station.service.RouteService;

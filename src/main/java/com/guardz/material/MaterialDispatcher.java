@@ -2,7 +2,7 @@ package com.guardz.material;
 
 import com.guardz.bus.controller.BusCenter;
 import com.guardz.bus.domain.Bus;
-import com.guardz.passanger.domain.Passenger;
+import com.guardz.passenger.domain.Passenger;
 import com.guardz.timer.ITimer;
 
 import java.util.ArrayList;
@@ -56,6 +56,9 @@ public class MaterialDispatcher implements IBusDispatcher, IPassengerDispatcher,
      * 乘客分发，相对比较简单，将到达分发时间的乘客，放入对应的车站队列中
      */
     private void dispatchPassenger(int worldTime) {
+        if (passengersWaitDispatch.size() == 0){
+            return;
+        }
         Iterator<Passenger> it = passengersWaitDispatch.iterator();
         while (it.hasNext()) {
             Passenger passenger = it.next();
@@ -71,6 +74,9 @@ public class MaterialDispatcher implements IBusDispatcher, IPassengerDispatcher,
      * @param worldTime
      */
     private void dispatchBus(int worldTime){
+        if (busesWaitDispatch.size() == 0){
+            return;
+        }
         Iterator<Bus> it = busesWaitDispatch.iterator();
         while (it.hasNext()) {
             Bus bus = it.next();

@@ -1,9 +1,9 @@
 package com.guardz.bus.domain;
 
 import com.guardz.bus.controller.BusController;
-import com.guardz.timer.ITimer;
+import com.guardz.passenger.domain.Passenger;
 import com.guardz.station.domain.Route;
-import com.guardz.passanger.domain.Passenger;
+import com.guardz.timer.ITimer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.List;
  * @version: 1.0.0
  */
 public class Bus implements ITimer {
-    private static final int DEFAULT_MAX_PASSENGER = 29;
     /**
      * 向前路线
      */
@@ -33,39 +32,19 @@ public class Bus implements ITimer {
     private String id;
 
     /**
-     * 总乘客
+     * 状态控制机
      */
-    private int totalPassengerCount;
+    private final BusController busController;
 
     /**
-     * 当前乘客
+     * 运行记录统计
      */
-    private List<Passenger> currentPassengers = new ArrayList<>();
-
-    private BusController busController;
-
-    private List<Record> records = new ArrayList<>();
+    private final BusStatistics busStatistics;
 
     public Bus() {
         busController = new BusController(this);
-    }
-
-    public void addRecord(int worldTime, String event){
-        Record record = new Record();
-        record.name = id;
-        record.time = worldTime;
-        record.event = event;
-        records.add(record);
-    }
-
-    public String getRecord(){
-        StringBuffer stringBuffer = new StringBuffer();
-        try {
-            records.forEach(record -> stringBuffer.append(record.toString()));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return stringBuffer.toString();
+        busStatistics = new BusStatistics(this);
+        busController.addBusEventListener(busStatistics);
     }
 
     @Override
@@ -78,15 +57,20 @@ public class Bus implements ITimer {
         busController.tick(offset, worldTime);
     }
 
-    public boolean isStop(){
+    public String getStatistics(int worldTime){
+        return busStatistics.getBusStatistics(worldTime);
+    }
+
+    public String getRecordDetail(){
+        return busStatistics.getRecordDetail();
+    }
+
+    public boolean isStop() {
         return busController.isStop();
     }
 
     public boolean isFull() {
-        if (currentPassengers.size() >= DEFAULT_MAX_PASSENGER) {
-            return true;
-        }
-        return false;
+        return busController.isFull();
     }
 
     public boolean isGettingOn() {
@@ -94,8 +78,6 @@ public class Bus implements ITimer {
     }
 
     public void getOn(Passenger passenger) {
-        currentPassengers.add(passenger);
-        totalPassengerCount++;
         busController.getOn(passenger);
     }
 
@@ -106,7 +88,7 @@ public class Bus implements ITimer {
         busController.start(worldTime);
     }
 
-    // 获取当前线路
+    // ----------- get & set ---------------
     public Route getCurrentRoute() {
         return busController.getCurrentRoute();
     }
@@ -141,10 +123,6 @@ public class Bus implements ITimer {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<Passenger> getCurrentPassengers() {
-        return currentPassengers;
     }
 
     public static class BusBuilder {

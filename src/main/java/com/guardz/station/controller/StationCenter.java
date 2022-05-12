@@ -5,11 +5,12 @@ import com.guardz.timer.WorldStartForkTask;
 import com.guardz.timer.ITimer;
 import com.guardz.station.domain.Stations;
 import com.guardz.station.service.StationsService;
+import com.guardz.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 
 /**
  * @Created: lidong on 2022/5/11 2:13 PM
@@ -32,11 +33,16 @@ public class StationCenter implements ITimer {
 
     @Override
     public void onWorldStart() {
-        forkJoinPool.invoke(new WorldStartForkTask(new ArrayList<>(stationsSet)));
+        // thread poll
+        ThreadUtil.executeWorldStart(stationsSet);
+
+        //forkJoinPool.invoke(new WorldStartForkTask(new ArrayList<>(stationsSet)));
     }
 
     @Override
     public void onTick(int offset, int worldTime) {
-        forkJoinPool.invoke(new TimerForkTask(new ArrayList<>(stationsSet), offset, worldTime));
+        ThreadUtil.executeOnTick(stationsSet, offset, worldTime);
+
+        //forkJoinPool.invoke(new TimerForkTask(new ArrayList<>(stationsSet), offset, worldTime));
     }
 }

@@ -3,4 +3,4 @@
  * @Description: 乘客域
  * @version: 1.0.0
  */
-package com.guardz.passanger;
+package com.guardz.passenger;

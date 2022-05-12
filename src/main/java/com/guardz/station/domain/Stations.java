@@ -1,10 +1,13 @@
 package com.guardz.station.domain;
 
 import com.guardz.bus.domain.Bus;
-import com.guardz.passanger.domain.Passenger;
+import com.guardz.passenger.domain.Passenger;
 import com.guardz.timer.ITimer;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -21,12 +24,12 @@ public class Stations implements ITimer {
     /**
      * 当前站点等待上车的乘客
      */
-    private CopyOnWriteArrayList<Passenger> waitingPassenger = new CopyOnWriteArrayList<>();
+    private final HashMap<Route, List<Passenger>> waitingPassenger = new HashMap<>();
 
     /**
      * 当前站点停靠的公交
      */
-    private CopyOnWriteArrayList<Bus> waitingBus = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Bus> waitingBus = new CopyOnWriteArrayList<>();
 
     public Stations(String stationsName) {
         this.stationsName = stationsName;
@@ -57,7 +60,12 @@ public class Stations implements ITimer {
      * 乘客到站准备乘车
      */
     public void addPassenger(Passenger passenger) {
-        waitingPassenger.add(passenger);
+        List<Passenger> passengers = waitingPassenger.get(passenger.getRoute());
+        if (passengers == null) {
+            passengers = new ArrayList<>();
+        }
+        passengers.add(passenger);
+        waitingPassenger.put(passenger.getRoute(), passengers);
     }
 
     /**
@@ -73,8 +81,13 @@ public class Stations implements ITimer {
      * 车辆抛锚时调用，将乘客放入队首
      * @param passenger
      */
-    public void addPassengerInHead(Passenger passenger) {
-        waitingPassenger.add(0, passenger);
+    public synchronized void addPassengerInHead(Passenger passenger) {
+        List<Passenger> passengers = waitingPassenger.get(passenger.getRoute());
+        if (passengers == null) {
+            passengers = new ArrayList<>();
+        }
+        passengers.add(0, passenger);
+        waitingPassenger.put(passenger.getRoute(), passengers);
     }
 
     /**
@@ -98,7 +111,7 @@ public class Stations implements ITimer {
         Passenger passenger = getFirstPassenger(route);
         if (passenger != null) {
             bus.getOn(passenger);
-            waitingPassenger.remove(passenger);
+            removePassenger(passenger);
         } else {
             bus.start(worldTime);
         }
@@ -107,11 +120,16 @@ public class Stations implements ITimer {
     /**
      * 获取第一个乘坐该线路的乘客
      */
-    private Passenger getFirstPassenger(Route route){
-        return waitingPassenger.stream()
-            .filter(p -> p.getRoute() == route)
-            .findFirst()
-            .orElse(null);
+    private Passenger getFirstPassenger(Route route) {
+        List<Passenger> passengerList = waitingPassenger.get(route);
+        if (CollectionUtils.isEmpty(passengerList)){
+            return null;
+        }
+        return passengerList.get(0);
+    }
+
+    public void removePassenger(Passenger passenger){
+        waitingPassenger.get(passenger.getRoute()).remove(passenger);
     }
 
 }

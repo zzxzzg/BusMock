@@ -1,4 +1,4 @@
-package com.guardz.passanger.domain;
+package com.guardz.passenger.domain;
 
 import com.guardz.station.domain.Route;
 import com.guardz.station.domain.Stations;
@@ -42,6 +42,8 @@ public class Passenger {
     public String getName() {
         return name;
     }
+
+
 
     public static class PassengerBuilder{
         private Stations start;

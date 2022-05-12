@@ -14,6 +14,6 @@ public class Record {
 
     @Override
     public String toString() {
-        return "Record{" + "name='" + name + '\'' + ", time=" + time + ", event='" + event + '\'' + '}' + '\n';
+        return "name='" + name + '\'' + ", time=" + time + ", event='" + event + '\'' + '\n';
     }
 }
